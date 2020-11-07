@@ -102,3 +102,23 @@ function $new() {
 }
 ```
 
+
+
+## instanceof  操作符
+
+`instanceof` 可以正确的判断对象的类型，其内部机制是通过判断对象的原型链中是不是能找到类型的 `prototype`。
+
+```js
+function $instanceof(instance, constructor) {
+    let prototype = constructor.prototype;
+    let __proto__ = instance.__proto__;
+    do {
+        if (__proto__ === prototype) return true;
+    } while ((__proto__ = __proto__.prototype));
+
+    return false;
+}
+```
+
+
+
