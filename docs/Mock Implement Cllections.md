@@ -77,3 +77,28 @@ function type(obj) {
 }
 ```
 
+
+
+## new 操作符
+
+在调用 `new` 的过程中会执行以下四个步骤：
+
+- 新生成一个对象
+- 链接到原型： `obj.__proto__ = constructor.prototype`
+- 绑定 this： `constructor.apply(obj)`
+- 返回新对象（如果构造函数有自己的返回值时，则返回该值）
+
+```js
+function $new() {
+    /* 新生成一个对象 */
+    let obj = new Object();
+    let constructor = Array.prototype.shift.call(arguments);// 获得构造函数
+    /* 链接到原型 */
+    obj.__proto__ = constructor.prototype;
+    /* 绑定this */
+    let result = constructor.apply(obj, arguments);
+    /* 返回新对象 */
+    return typeof result === "object" ? result : obj; // 确保 new 出来的是个对象
+}
+```
+
