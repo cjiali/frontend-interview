@@ -342,3 +342,25 @@ export default function throttle(fn, delay) {
 }
 ```
 
+
+
+## 继承
+
+在 JS 中，继承通常指的便是 **原型链继承**，也就是通过指定原型，并可以通过原型链继承原型上的属性或者方法。
+
+- 最优化: **圣杯模式**
+
+```js
+function inherit(C, P){
+    // 创建一个没有实例方法的类
+    let F = function () {};
+    F.prototype = P.prototype;
+    // 将实例作为子类的原型
+    C.prototype = new F(); // 父类实例
+    C.prototype.constructor = C; // constructor 归位
+    C.prototype.uber = P.prototype; // 保留父类原型
+    return C;
+}
+```
+
+- 使用 ES6 的语法糖 `class / extends`
