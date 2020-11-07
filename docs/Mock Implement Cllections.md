@@ -122,3 +122,42 @@ function $instanceof(instance, constructor) {
 
 
 
+## 改变 this 指向
+
+由于 JS 的设计原理：在函数中，可以引用运行环境中的变量。因此就需要一个机制来让我们可以在函数体内部获取当前的运行环境，这便是`this`。
+
+因此要明白 `this` 指向，其实就是要搞清楚 函数的运行环境，简单来说就是，谁调用了函数。例如:
+
+- `obj.fn()`，便是 `obj` 调用了函数，既函数中的 `this === obj`
+- `fn()`，这里可以看成 `window.fn()`，因此 `this === window`
+
+但这种机制并不完全能满足我们的业务需求，因此提供了三种方式可以手动修改 `this` 的指向:
+
+- `call: fn.call(target, 1, 2)`
+- `apply: fn.apply(target, [1, 2])`
+- `bind: fn.bind(target)(1,2)`
+
+`call` 和 `apply` 都是为了解决改变 `this` 的指向，作用都是相同的，只是传参的方式不同。`bind` 和其他两个方法作用也是一致的，只是该方法会返回一个函数；并且可以通过 `bind` 实现柯里化。
+
+除了第一个参数外，`call` 可以接收一个参数列表，`apply` 只接受一个参数数组。
+
+### `fn.call(target, 1, 2)`
+
+```js
+Function.prototype.$call = function () {
+    let context = Array.prototype.shift.call(arguments) || window;
+    // 给 context 添加一个原来不存在的临时属性，以避免污染原有属性
+    let key;
+    do {
+        key = Math.random();
+    } while (context[key]);
+    context[key] = this;
+    // 获取执行结果
+    let result = context[key](...arguments);
+    // 清除临时属性
+    delete context[key];
+
+    return result;
+};
+```
+
