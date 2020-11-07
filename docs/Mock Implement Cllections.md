@@ -203,3 +203,57 @@ Function.prototype.$bind = function (context) {
 };
 ```
 
+
+
+## 函数柯里化
+
+在一个函数中，首先填充几个参数，然后再返回一个新的函数的技术，称为函数的柯里化。通常可用于在不侵入函数的前提下，为函数 **预置通用参数**，供多次重复调用。
+
+```js
+function curriedAdd(x) {
+	return function (y) {
+		return x + y
+	}
+}
+
+const add = curriedAdd(1)
+
+add(2) === 3
+add(20) === 21
+```
+
+对 `curriedAdd` 进行抽象，可能会得到如下函数 `curry` ：
+
+```js
+function curry(fn, ...args) {
+    return args.length >= fn.length
+        ? fn(...args)
+        : function () {
+              return curry(fn, ...args, ...arguments);
+          };
+}
+```
+
+在此实现中，我们通过递归来将 curry 的返回的函数进行了柯里化。
+
+此外还可利用` fn.bind(target)(1,2)`和箭头函数实现函数柯里化：
+
+```js
+// fn.bind(target)(1,2) 形式
+add.bind(null, x, y, z)();
+add.bind(null, x, y)(z);
+add.bind(null, x)(y, z);
+add.bind(null)(x, y, z);
+
+//箭头函数形式
+((a,b,c)=>add(a,b,c))(x,y,z);
+((a,b)=>add(x,a,b))(y,z);
+((c)=>add(x,y,c))(z)
+(()=>add(x,y,z))();
+```
+
+> PS：这里通过 `jsPerf` 进行性能测试，可得性能：`箭头函数`>`bind`>`curry`。
+>
+> curry 函数相比 bind 函数，其原理相似，但是性能相差巨大，其原因是 bind 由浏览器实现，运行效率有加成。
+>
+> 从这个结果看 **curry** 性能无疑是最差的，但是另一方面就算最差的 `curry` 的实现，也能在本人的个人电脑上达到 50w Ops/s 的情况下，说明这些性能是无需在意的。
