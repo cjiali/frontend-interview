@@ -612,3 +612,50 @@ $Promise.race = function (promises) {
 };
 ```
 
+
+
+## 深浅拷贝
+
+**浅拷贝**指的是将一个对象的属性值复制到另一个对象，如果有的属性的值为引用类型的话，那么会将这个引用的地址复制给对象，因此两个对象会有同一个引用类型的引用。浅拷贝可以使用  `Object.assign` 和展开运算符来实现。
+
+**深拷贝**相对浅拷贝而言，如果遇到属性值为引用类型的时候，它新建一个引用类型并将对应的值复制给它，因此对象获得的一个新的引用类型而不是一个原有类型的引用。深拷贝对于一些对象可以使用 JSON 的两个函数来实现，但是由于 JSON 的对象格式比 js 的对象格式更加严格，所以如果属性值里边出现函数或者 Symbol 类型的值时，会转换失败。
+
+```js
+/**
+ * 浅拷贝
+ * @param {*} target
+ */
+export function shallowCopy(target) {
+    // 只拷贝对象
+    if (!target || typeof target !== "object") return;
+    // 根据 target 的类型判断是新建一个数组还是对象
+    let clone = Array.isArray(target) ? [] : {};
+    // 遍历 target，并且判断是 target 的属性才拷贝
+    for (let key in target) {
+        if (target.hasOwnProperty(key)) {
+            clone[key] = target[key];
+        }
+    }
+
+    return clone;
+}
+
+/**
+ * 深拷贝
+ * @param {*} target
+ */
+export function deepCopy(target) {
+    if (!target || typeof target !== "object") return;
+
+    let clone = Array.isArray(target) ? [] : {};
+
+    for (let key in target) {
+        if (target.hasOwnProperty(key)) {
+            clone[key] = typeof target[key] === "object" ? deepCopy(target[key]) : target[key];
+        }
+    }
+
+    return clone;
+}
+```
+
