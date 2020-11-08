@@ -1,4 +1,5 @@
-const { $Promise } = require("../src/promise");
+// const { $Promise } = require("../src/promise");
+import $Promise from "../src/promise";
 
 describe("#promise", () => {
     test("executor resolved", (done) => {
